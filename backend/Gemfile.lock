@@ -81,7 +81,7 @@ GEM
     crass (1.0.6)
     date (3.3.4)
     erubi (1.12.0)
-    ffi (1.16.3)
+    ffi (1.17.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
     i18n (1.14.5)
@@ -179,10 +179,10 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    spring (2.1.1)
-    spring-watcher-listen (2.0.1)
+    spring (4.4.0)
+    spring-watcher-listen (2.1.0)
       listen (>= 2.7, < 4.0)
-      spring (>= 1.2, < 3.0)
+      spring (>= 4)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -228,7 +228,7 @@ DEPENDENCIES
   route_mechanic
   selenium-webdriver
   spring
-  spring-watcher-listen (~> 2.0.0)
+  spring-watcher-listen (~> 2.1.0)
   turbolinks (~> 5)
   tzinfo-data
   web-console (>= 4.1.0)
