@@ -116,13 +116,13 @@ GEM
       timeout
     net-smtp (0.5.0)
       net-protocol
-    nio4r (2.7.3)
+    nio4r (2.7.4)
     nokogiri (1.16.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     pg (1.5.6)
     public_suffix (5.0.5)
-    puma (5.6.8)
+    puma (7.1.0)
       nio4r (~> 2.0)
     racc (1.8.0)
     rack (2.2.9)
@@ -221,7 +221,7 @@ DEPENDENCIES
   jbuilder (~> 2.11)
   listen (~> 3.7)
   pg (>= 0.18, < 2.0)
-  puma (~> 5.6)
+  puma (~> 7.1)
   rack-cors
   rack-mini-profiler (~> 3.0)
   rails (~> 6.1.6)
