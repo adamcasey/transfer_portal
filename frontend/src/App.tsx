@@ -42,11 +42,29 @@ function HelmetRail({ school, colors, accent, years }: { school: string; colors:
   return <article className="helmet-card" style={{ background: colors, color: accent }}><div className="helmet-mark" aria-hidden="true">{school.split(/\s+/).map((word) => word[0]).join('').slice(0, 2)}</div><div><strong>{school}</strong><span>{years}</span></div><span className="helmet-shape" aria-hidden="true"><span /></span></article>;
 }
 
+type PlayerSearchResult = Pick<Player, 'name' | 'position' | 'school' | 'initials'> & { playerId?: string; currentTeam?: { name?: string } };
+
 const App: React.FC = () => {
   const [query, setQuery] = React.useState('');
   const [selected, setSelected] = React.useState<Player | null>(null);
   const [dark, setDark] = React.useState(false);
-  const suggestions = React.useMemo(() => players.map((player) => ({ player, score: rankPlayer(player, query) })).filter(({ score }) => score > 0).sort((a, b) => b.score - a.score).slice(0, 4).map(({ player }) => player), [query]);
+  const [remoteSuggestions, setRemoteSuggestions] = React.useState<PlayerSearchResult[]>([]);
+  const [searching, setSearching] = React.useState(false);
+  React.useEffect(() => {
+    const normalized = query.trim();
+    if (!normalized) { setRemoteSuggestions([]); return; }
+    const controller = new AbortController();
+    setSearching(true);
+    fetch(`/api/players?q=${encodeURIComponent(normalized)}&limit=4`, { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Player search unavailable')))
+      .then((payload) => setRemoteSuggestions(payload.players || []))
+      .catch(() => setRemoteSuggestions([]))
+      .finally(() => setSearching(false));
+    return () => controller.abort();
+  }, [query]);
+  const suggestions = remoteSuggestions.length > 0
+    ? remoteSuggestions.map((result) => ({ ...players.find((player) => player.name === result.name), ...result, school: result.currentTeam?.name || result.school || 'FBS football' } as Player))
+    : players.map((player) => ({ player, score: rankPlayer(player, query) })).filter(({ score }) => score > 0).sort((a, b) => b.score - a.score).slice(0, 4).map(({ player }) => player);
   const rails = [...fbsPrograms, ...fbsPrograms, ...fbsPrograms];
 
   return <div className={dark ? 'app dark' : 'app'}>

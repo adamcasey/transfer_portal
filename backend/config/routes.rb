@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
   get 'greetings/hello'
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  get 'api/players', to: 'players#index'
+  get 'api/players/:id', to: 'players#show'
+  # For details on the DSL available within Rails applications, see http://guides.rubyonrails.org/routing.html
 end
+
