@@ -1,5 +1,23 @@
+const fs = require("fs");
 const path = require("path");
 const HTMLPlugin = require("html-webpack-plugin");
+
+class CopyPublicAssetsPlugin {
+  apply(compiler) {
+    compiler.hooks.thisCompilation.tap("CopyPublicAssetsPlugin", (compilation) => {
+      compilation.hooks.processAssets.tap(
+        {
+          name: "CopyPublicAssetsPlugin",
+          stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+        },
+        () => {
+          const assetPath = path.join(__dirname, "public", "helmet-reference.jpeg");
+          compilation.emitAsset("helmet-reference.jpeg", new compiler.webpack.sources.RawSource(fs.readFileSync(assetPath)));
+        },
+      );
+    });
+  }
+}
 
 module.exports = {
   module: {
