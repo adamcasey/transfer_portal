@@ -39,7 +39,7 @@ const fbsPrograms = [
 ].map(([name, colors, accent]) => ({ name, colors, accent, years: '2026 — Present' }));
 
 function HelmetRail({ school, colors, accent, years }: { school: string; colors: string; accent: string; years: string }) {
-  return <article className="helmet-card" style={{ background: colors, color: accent }}><div className="helmet-mark" aria-hidden="true">{school.split(/\s+/).map((word) => word[0]).join('').slice(0, 2)}</div><div><strong>{school}</strong><span>{years}</span></div><span className="helmet-shape" aria-hidden="true"><span /></span></article>;
+  return <article className="helmet-card" style={{ background: colors, color: accent }}><div className="helmet-mark" aria-hidden="true">{school.split(/\s+/).map((word) => word[0]).join('').slice(0, 2)}</div><div><strong>{school}</strong><span>{years}</span></div><img className="helmet-image" src="/helmet-reference.jpeg" alt="" aria-hidden="true" /></article>;
 }
 
 type PlayerSearchResult = Pick<Player, 'name' | 'position' | 'school' | 'initials'> & { playerId?: string; currentTeam?: { name?: string } };
