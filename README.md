@@ -1,52 +1,85 @@
-# Rails-React-TypeScript-Docker Example ![backend_test](https://github.com/ohbarye/rails-react-typescript-docker-example/actions/workflows/backend_test.yml/badge.svg) ![frontend_test](https://github.com/ohbarye/rails-react-typescript-docker-example/actions/workflows/frontend_test.yml/badge.svg)
+# Transfer Portal
 
-## TL;DR
+The intended product is a college football roster and transfer tracker for FBS
+(formerly Division I-A) programs. The repository currently provides a React /
+TypeScript frontend, a Rails JSON API, PostgreSQL, and a Redis cache. The only API
+endpoint is `GET /greetings/hello`; roster and transfer features are not implemented.
 
-**Here is an example application with the following modern web technology stacks. With this boilerplate, you can easily start to build your own app.**
+## Run locally
 
-- [Ruby](https://www.ruby-lang.org/en/) 3.3.1
-- [Rails](https://rubyonrails.org/) 6.1.4
-- [React.js](https://reactjs.org/) 17.0.1
-- [TypeScript](https://www.typescriptlang.org/) 4.3.5
-- [Docker](https://docs.docker.com/)
-- [PostgreSQL](https://www.postgresql.org/) 11
-- [GitHub Actions](https://github.com/features/actions)
-
-## Usage
-
-```shell
-$ git clone https://github.com/ohbarye/rails-react-typescript-docker-example.git && cd rails-react-typescript-docker-example
-
-# Setup
-$ docker-compose run frontend yarn
-$ docker-compose run backend bin/rails db:create db:migrate
-
-# Start
-$ docker-compose up -d
-
-# Open frontend
-$ open http://localhost:80 # You'll see yaichi page, then click any app
-
-# Check backend API
-$ curl -H 'Host: backend.localhost' http://localhost/greetings/hello
+```sh
+docker compose up -d --build
+docker compose exec backend bundle exec rails db:prepare
 ```
 
-## Motivation
+Frontend: http://localhost:3000. API: http://localhost:3001/greetings/hello.
+Ruby is pinned to 4.0.7; the frontend image uses Node 18. PostgreSQL data stays in
+`tmp/db`; do not delete that directory to troubleshoot startup.
 
-Nowadays, I feel like **we need a wide range acknowledgment on web development even if we call ourselves "backend developer" or "frontend developer".**
+For the host-based `dev.sh` launcher, install backend gems and frontend packages
+first, then prepare the database with the same `DATABASE_URL` used by the launcher.
+Use either the host launcher or the containerized application to avoid port conflicts.
 
-As for my experience, I've been a Rails engineer, I'm but recently working like kinda frontend developer because I spend all of my working time for building an SPA (single page application) built with React + TypeScript.
+Compose is a local development configuration: PostgreSQL uses trust authentication
+and Redis has no password. Both ports bind only to localhost. Production requires
+an authenticated `DATABASE_URL`, an authenticated/private `REDIS_URL`, and the
+appropriate `ALLOWED_ORIGINS`. Production HTTPS enforcement remains enabled.
 
-The SPA, Of course, has a backend API, Ruby on Rails connecting PostgreSQL in my case. I use Docker Compose for defining and running multi-container Docker applications because it's not much simple to bootstrap all of applications and middlewares.
+## Caching
 
-**Learning each technology itself is not a burden. I rather like learning. But I've thought I'd like to pursue my playground whose tech stacks are virtually same as ones I develop in work.**
+Development and production use Rails' `redis_cache_store`, configured in
+`backend/config/application.rb`. Keys are separated by environment and expire after
+five minutes. Tests use `null_store` for isolation. Compose caps Redis at 128 MB,
+evicts least-recently-used keys when full, and disables persistence because cache
+entries are disposable. The existing local Redis dump is preserved and ignored.
 
-## Further Details
+Configuring Redis does **not** automatically cache Active Record queries. There are
+currently no roster queries to accelerate. When the roster endpoint is implemented,
+cache its serialized query results with `Rails.cache.fetch`, including season,
+team, and every filter in the key, and invalidate affected keys after imports.
+PostgreSQL remains the source of truth. Rails' Redis store falls back to computing
+the value if Redis is unavailable; the smoke check below detects that failure.
 
-### Backend
+## Why 2026 rosters are missing
 
-The combination, Rails + PostgreSQL + Docker Compose, is just a result I followed [Docker Compose's official instruction](https://docs.docker.com/compose/rails/).
+The repository has no roster-loading implementation:
 
-### Frontend
+- `backend/db/schema.rb` has no team, player, roster, or transfer tables.
+- There are no database migrations or domain models beyond `ApplicationRecord`.
+- `backend/db/seeds.rb` contains only generated comments.
+- There is no roster provider/client, source configuration, import task, or refresh schedule.
+- The frontend does not query rosters. Its empty state now states that the importer is missing.
 
-It consist of very thin webpack settings, TypeScript config, and Jest.
+At inspection, no Compose services for this project were running and there was no
+local database data directory. Starting PostgreSQL created a fresh server; running
+`db:prepare` creates the application databases but cannot invent roster data.
+The old PDF/BullMQ scripts read an unrelated applicant CSV; Sidekiq had no actual
+jobs. Neither was a football ingestion pipeline.
+
+The minimum next implementation needs a chosen roster source with verified 2026
+FBS coverage, season-aware team/player/roster tables, and a repeatable import that
+validates source responses, upserts records, reports coverage/failures, and updates
+the cache. A refresh schedule can call that import once it exists. Nothing in this
+cleanup downloads or claims to verify current 2026 rosters.
+
+## Checks
+
+```sh
+docker compose exec -e RAILS_ENV=test backend bundle exec rails db:prepare test
+docker compose exec backend bundle exec rails runner script/check_cache.rb
+npm --prefix frontend ci
+npm --prefix frontend run typecheck
+npm --prefix frontend test -- --runInBand
+npm --prefix frontend run build
+```
+
+The Redis check verifies the configured Rails cache, a miss followed by a hit,
+a server-side expiry, and explicit invalidation without clearing other keys.
+
+## Removed
+
+Unrelated CSV-to-PDF workers and their dependencies; unused Sidekiq/scheduler and
+queue dashboard; Spring service and binstubs; Yaichi routing proxy; unused Rails
+mail, upload, websocket, server-rendered view, and asset scaffolding; unused browser
+test dependencies; and the empty root npm lockfile. The app retains the existing
+Rails framework dependency rather than introducing a framework upgrade.

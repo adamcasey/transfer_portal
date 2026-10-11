@@ -1,0 +1,35 @@
+{
+  // --- Formatting ---
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // --- Linting ---
+  "eslint.enable": true,
+  "eslint.run": "onSave",
+  "eslint.alwaysShowStatus": true,
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+
+  // --- Auto-fix minor linting issues on save ---
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always",
+    "source.fixAll.eslint": "always"
+  },
+
+  // --- Formatting options ---
+  "prettier.singleQuote": true,
+  "prettier.semi": true,
+  "prettier.trailingComma": "es5",
+  "prettier.printWidth": 100,
+  "prettier.tabWidth": 2,
+
+  // --- Ruby on Rails Backend ---
+  "[ruby]": {
+    // "editor.defaultFormatter": "rebornix.Ruby",
+    "editor.formatOnSave": true
+  },
+  "ruby.format": "rubocop",
+  "files.associations": {
+    "*.rb": "ruby",
+    "*.rake": "ruby"
+  }
+}
