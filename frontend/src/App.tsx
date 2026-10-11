@@ -1,35 +1,14 @@
 import React from 'react';
 import './App.css';
 
-const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://backend.localhost';
-
-const fetchContent = async (updateContent: (content: string) => void) => {
-  const response = await fetch(`${BACKEND_API_URL}/greetings/hello`,{
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  });
-  const data = await response.json();
-  updateContent(data.content);
-};
-
-const App: React.FC = () => {
-  const [content, updateContent] = React.useState('Waiting for a response from Rails...');
-
-  React.useEffect(() => {
-    fetchContent(updateContent);
-  }, []);
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          {content}
-        </p>
-      </header>
-    </div>
-  );
-}
+const App: React.FC = () => (
+  <main className="App">
+    <header className="App-header">
+      <h1>Transfer Portal</h1>
+      <p>College football rosters and transfer tracking.</p>
+      <p>Roster data is not available yet. The roster importer has not been built.</p>
+    </header>
+  </main>
+);
 
 export default App;
