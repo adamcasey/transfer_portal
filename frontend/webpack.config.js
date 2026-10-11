@@ -30,6 +30,10 @@ module.exports = {
   devServer: {
     host: '0.0.0.0',
     port: 3000,
-    disableHostCheck: true,
+    allowedHosts: ['localhost', '.localhost'],
+    watchFiles: {
+      paths: ['src/**/*'],
+      options: { usePolling: true }
+    }
   },
 };

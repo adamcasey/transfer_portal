@@ -1,17 +1,16 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "main": "index.js",
-  "type": "module",
   "license": "MIT",
   "scripts": {
     "build": "webpack --mode production",
-    "dev": "webpack-dev-server",
+    "dev": "webpack serve --mode development",
     "test": "jest",
     "typecheck": "tsc -p . --noEmit"
   },
   "devDependencies": {
     "@types/jest": "^27.5.0",
+    "@types/node": "^16.18.126",
     "@types/react": "^17.0.40",
     "@types/react-dom": "^17.0.11",
     "css-loader": "^3.5.3",
@@ -25,7 +24,7 @@
     "ts-loader": "^7.0.5",
     "typescript": "^4.6.4",
     "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12",
+    "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
