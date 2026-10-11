@@ -65,6 +65,7 @@ GEM
     bigdecimal (4.1.3)
     bootsnap (1.18.3)
       msgpack (~> 1.2)
+    bson (5.2.0)
     builder (3.2.4)
     byebug (11.1.3)
     cgi (0.5.2)
@@ -96,6 +97,9 @@ GEM
     mini_mime (1.1.5)
     mini_portile2 (2.8.6)
     minitest (5.27.0)
+    mongo (2.26.0)
+      base64
+      bson (>= 4.14.1, < 6.0.0)
     msgpack (1.7.2)
     mutex_m (0.3.0)
     net-imap (0.4.11)
@@ -188,6 +192,7 @@ DEPENDENCIES
   listen (~> 3.7)
   logger
   minitest (~> 5.0)
+  mongo (~> 2.21)
   mutex_m (~> 0.3.0)
   ostruct (~> 0.6.3)
   pg (>= 0.18, < 2.0)
