@@ -25,3 +25,14 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Private Archify artifacts and reviewed local skill copy
+/.archify/
+/.agents/skills/archify/
+
+# Local secrets and generated Redis snapshots
+.env
+.env.*
+!.env.example
+*.rdb
+.DS_Store

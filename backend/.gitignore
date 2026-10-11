@@ -24,3 +24,13 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Ignore environment files with secrets
+.env
+.env.*
+
+# Ignore Redis dump files
+*.rdb
+
+# Ignore any MARKDOWN files
+*.md
