@@ -1,6 +1,10 @@
 require_relative "boot"
 
-require "rails/all"
+require "rails"
+require "active_record/railtie"
+require "action_controller/railtie"
+require "rails/test_unit/railtie"
+require "active_support/core_ext/numeric/time"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -10,6 +14,16 @@ module Myapp
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
+
+    config.api_only = true
+    config.cache_store = :redis_cache_store, {
+      url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/0'),
+      namespace: "transfer_portal:#{Rails.env}",
+      expires_in: 5.minutes,
+      connect_timeout: 1,
+      read_timeout: 1,
+      write_timeout: 1
+    }
 
     # Configuration for the application, engines, and railties goes here.
     #
