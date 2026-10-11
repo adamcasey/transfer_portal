@@ -28,6 +28,7 @@
 # Ignore environment files with secrets
 .env
 .env.*
+!.env.example
 
 # Ignore Redis dump files
 *.rdb
