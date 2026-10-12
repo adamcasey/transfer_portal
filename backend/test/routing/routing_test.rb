@@ -1,7 +1,9 @@
-class RoutingTest < Minitest::Test
-  include ::RouteMechanic::Testing::Methods
+require 'test_helper'
 
-  def test_that_application_has_correct_routes
-    assert_all_routes
+class RoutingTest < ActionDispatch::IntegrationTest
+  test 'API responds with JSON' do
+    get '/greetings/hello'
+    assert_response :success
+    assert_equal({ 'content' => 'Hello from Rails' }, response.parsed_body)
   end
 end
