@@ -36,3 +36,4 @@
 !.env.example
 *.rdb
 .DS_Store
+PROJECT.md
