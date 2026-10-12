@@ -39,8 +39,11 @@ services:
         condition: service_healthy
   frontend:
     build: ./frontend
+    environment:
+      API_PROXY_TARGET: http://backend:3000
     volumes:
       - ./frontend/src:/myapp/frontend/src:delegated
+      - ./frontend/webpack.config.js:/myapp/frontend/webpack.config.js:ro
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
