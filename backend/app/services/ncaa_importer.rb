@@ -18,7 +18,7 @@ class NcaaImporter
     total = 0
     page = 1
     loop do
-      payload = get("/stats/football/fbs/current/individual/750/p/#{page}")
+      payload = get("/stats/football/fbs/current/individual/750?page=#{page}")
       rows = Array(payload['data'] || payload['players'] || payload['results'])
       rows.each { |row| upsert_player(row) }
       total += rows.length
