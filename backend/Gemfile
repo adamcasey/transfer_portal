@@ -21,6 +21,7 @@ gem 'cgi'
 
 group :development, :test do
   gem 'byebug', platforms: :mri
+  gem 'dotenv-rails'
 end
 
 group :development do
