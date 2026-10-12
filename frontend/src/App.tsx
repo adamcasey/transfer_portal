@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 
-<<<<<<< HEAD
 type NewsItem = { source: string; date: string; title: string; url: string };
 type Player = {
   name: string;
@@ -42,48 +41,6 @@ const fbsPrograms = [
 function HelmetRail({ school, colors, accent, years }: { school: string; colors: string; accent: string; years: string }) {
   return <article className="helmet-card" style={{ background: colors, color: accent }}><div className="helmet-mark" aria-hidden="true">{school.split(/\s+/).map((word) => word[0]).join('').slice(0, 2)}</div><div><strong>{school}</strong><span>{years}</span></div><img className="helmet-image" src="/helmet-reference.jpeg" alt="" aria-hidden="true" /></article>;
 }
-||||||| 24ade62
-const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://backend.localhost';
-
-const fetchContent = async (updateContent: (content: string) => void) => {
-  const response = await fetch(`${BACKEND_API_URL}/greetings/hello`,{
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  });
-  const data = await response.json();
-  updateContent(data.content);
-};
-
-const App: React.FC = () => {
-  const [content, updateContent] = React.useState('Waiting for a response from Rails...');
-
-  React.useEffect(() => {
-    fetchContent(updateContent);
-  }, []);
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          {content}
-        </p>
-      </header>
-    </div>
-  );
-}
-=======
-const App: React.FC = () => (
-  <main className="App">
-    <header className="App-header">
-      <h1>Transfer Portal</h1>
-      <p>College football rosters and transfer tracking.</p>
-      <p>Roster data is not available yet. The roster importer has not been built.</p>
-    </header>
-  </main>
-);
->>>>>>> origin/vercel-refresh
 
 type PlayerSearchResult = Pick<Player, 'name' | 'position' | 'school' | 'initials'> & { playerId?: string; currentTeam?: { name?: string } };
 
