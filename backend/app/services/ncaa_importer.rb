@@ -33,25 +33,32 @@ class NcaaImporter
   end
 
   def upsert_player(row)
-    name = row['name'] || row['playerName'] || row.dig('player', 'name')
-    return if name.to_s.empty?
+    name = row['Name'] || row['name'] || row['playerName'] || row.dig('player', 'name')
+    return if name.to_s.strip.empty?
 
-    player_id = (row['playerId'] || row['id'] || row.dig('player', 'id')).to_s
+    team = row['Team'] || row['team'] || row.dig('team', 'name') || ''
+    # API provides no stable ID — derive one from name + team so upserts are idempotent
+    player_id = "#{name}-#{team}".downcase.gsub(/[^a-z0-9]/, '-').squeeze('-')
     normalized = name.downcase.gsub(/[^a-z0-9 ]/, ' ').split.join(' ')
+
     document = {
       'playerId' => player_id,
       'name' => name,
       'nameNormalized' => normalized,
       'searchTokens' => normalized.split,
-      'position' => row['position'],
-      'classYear' => row['class'] || row['classYear'],
-      'currentTeam' => { 'name' => row['team'] || row.dig('team', 'name'), 'nameNormalized' => (row['team'] || '').to_s.downcase },
+      'position' => row['Position'] || row['position'],
+      'classYear' => row['Cl'] || row['class'] || row['classYear'],
+      'currentTeam' => { 'name' => team, 'nameNormalized' => team.downcase },
       'latestSeason' => @season,
       'source' => SOURCE,
       'updatedAt' => Time.now.utc
     }
     return if @dry_run
 
-    @players.update_one({ 'playerId' => player_id }, { '$set' => document, '$setOnInsert' => { 'createdAt' => Time.now.utc } }, upsert: true)
+    @players.update_one(
+      { 'playerId' => player_id },
+      { '$set' => document, '$setOnInsert' => { 'createdAt' => Time.now.utc } },
+      upsert: true
+    )
   end
 end
