@@ -15,10 +15,18 @@ class NcaaImporter
   end
 
   def run
-    payload = get('/stats/football/fbs/current/individual/750')
-    rows = Array(payload['data'] || payload['players'] || payload['results'])
-    rows.each { |row| upsert_player(row) }
-    { source: SOURCE, season: @season, status: 'completed', players: rows.length, dryRun: @dry_run }
+    total = 0
+    page = 1
+    loop do
+      payload = get("/stats/football/fbs/current/individual/750/p/#{page}")
+      rows = Array(payload['data'] || payload['players'] || payload['results'])
+      rows.each { |row| upsert_player(row) }
+      total += rows.length
+      pages = payload['pages'].to_i
+      break if page >= pages || rows.empty?
+      page += 1
+    end
+    { source: SOURCE, season: @season, status: 'completed', players: total, dryRun: @dry_run }
   rescue StandardError => e
     { source: SOURCE, season: @season, status: 'failed', error: e.message, dryRun: @dry_run }
   end
