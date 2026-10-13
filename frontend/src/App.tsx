@@ -62,9 +62,7 @@ const App: React.FC = () => {
       .finally(() => setSearching(false));
     return () => controller.abort();
   }, [query]);
-  const suggestions = remoteSuggestions.length > 0
-    ? remoteSuggestions.map((result) => ({ ...players.find((player) => player.name === result.name), ...result, school: result.currentTeam?.name || result.school || 'FBS football' } as Player))
-    : players.map((player) => ({ player, score: rankPlayer(player, query) })).filter(({ score }) => score > 0).sort((a, b) => b.score - a.score).slice(0, 4).map(({ player }) => player);
+  const suggestions = remoteSuggestions.map((result) => ({ ...result, school: result.currentTeam?.name || result.school || 'FBS football' } as Player));
   const rails = [...fbsPrograms, ...fbsPrograms, ...fbsPrograms];
 
   return <div className={dark ? 'app dark' : 'app'}>
